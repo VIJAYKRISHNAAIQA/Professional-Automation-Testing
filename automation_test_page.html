@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Testing Practice Page - Professional Edition</title>
+    <style>
+        /* ========== GLOBAL STYLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5568d3;
+            --secondary: #764ba2;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+            --light: #f8f9fa;
+            --dark: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        }
+
+        /* ========== NAVIGATION SIDEBAR ========== */
+        .nav-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px 20px;
+            overflow-y: auto;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .nav-sidebar {
+            background: rgba(30, 41, 59, 0.95);
+            color: white;
+        }
+
+        .nav-logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-bottom: 10px;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        body.dark-mode .nav-links a {
+            color: #cbd5e1;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-links a.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .theme-toggle {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .theme-toggle button {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: 240px;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ========== SECTION CARD STYLES ========== */
+        .section-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        body.dark-mode .section-card {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .level-badge {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-right: 20px;
+            font-size: 0.9em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .level-basic { background: linear-gradient(135deg, #4ade80, #22c55e); color: white; }
+        .level-medium { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+        .level-advanced { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+
+        h2 {
+            color: #1e293b;
+            font-size: 2em;
+        }
+
+        body.dark-mode h2 {
+            color: #f1f5f9;
+        }
+
+        /* ========== FORM ELEMENTS ========== */
+        .element-group {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 10px;
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .element-group {
+            background: #0f172a;
+            border-left-color: var(--success);
+        }
+
+        .element-group:hover {
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        body.dark-mode label {
+            color: #cbd5e1;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input:disabled {
+            background: #e2e8f0;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item,
+        .radio-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+
+        body.dark-mode .checkbox-item,
+        body.dark-mode .radio-item {
+            background: #1e293b;
+        }
+
+        .checkbox-item:hover,
+        .radio-item:hover {
+            background: #f1f5f9;
+        }
+
+        .checkbox-item input,
+        .radio-item input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* ========== MODAL STYLES ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 8% auto;
+            padding: 40px;
+            border-radius: 16px;
+            width: 85%;
+            max-width: 550px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+        }
+
+        body.dark-mode .modal-content {
+            background: #1e293b;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100px) scale(0.8); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: #94a3b8;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        /* ========== ADVANCED ELEMENTS ========== */
+        iframe {
+            width: 100%;
+            height: 250px;
+            border: 3px solid #cbd5e1;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        iframe:hover {
+            border-color: var(--primary);
+        }
+
+        .hidden-element {
+            display: none;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--success), #22c55e);
+            color: white;
+            border-radius: 8px;
+            margin-top: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        .hover-container {
+            padding: 25px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px dashed #cbd5e1;
+        }
+
+        body.dark-mode .hover-container {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        .hover-container:hover {
+            background: #e2e8f0;
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .hover-container:hover .hidden-element {
+            display: block;
+        }
+
+        #dynamicContent {
+            min-height: 80px;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 8px;
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode #dynamicContent {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        .loading {
+            color: var(--primary);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #cbd5e1;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+        }
+
+        tbody tr {
+            transition: background 0.3s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        body.dark-mode tbody tr:hover {
+            background: #0f172a;
+        }
+
+        .output-box {
+            padding: 20px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            margin-top: 15px;
+            min-height: 50px;
+            border-left: 4px solid var(--success);
+        }
+
+        body.dark-mode .output-box {
+            background: #0f172a;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1e293b;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .pagination button {
+            padding: 10px 20px;
+        }
+
+        .pagination button.active {
+            background: var(--success);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .nav-sidebar {
+                transform: translateX(-240px);
+            }
+            
+            .nav-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== NAVIGATION SIDEBAR ========== -->
+    <nav class="nav-sidebar" id="navSidebar">
+        <div class="nav-logo">🧪 AutoTest</div>
+        <ul class="nav-links">
+            <li><a href="#basic" class="nav-link">🔹 Basic Level</a></li>
+            <li><a href="#medium" class="nav-link">🟡 Medium Level</a></li>
+            <li><a href="#advanced" class="nav-link">🔴 Advanced Level</a></li>
+            <li><a href="#login" class="nav-link">🔐 Login Simulation</a></li>
+        </ul>
+        <div class="theme-toggle">
+            <button id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="main-content">
+        <div class="container">
+            <h1>🧪 Professional Automation Testing Practice Page</h1>
+
+            <!-- ========================================== -->
+            <!-- BASIC LEVEL SECTION - ENHANCED -->
+            <!-- ========================================== -->
+            <div class="section-card" id="basic">
+                <div class="section-header">
+                    <span class="level-badge level-basic">🔹 BASIC</span>
+                    <h2>Basic Level - Form Elements & Validation</h2>
+                </div>
+
+                <!-- Username with validation -->
+                <div class="element-group">
+                    <label for="username">Username (ID: username) <span style="color:red">*</span></label>
+                    <input type="text" id="username" required minlength="3" placeholder="Enter username (min 3 chars)" data-test-id="input-username">
+                    <span class="error-message" id="usernameError">Username must be at least 3 characters</span>
+                </div>
+
+                <!-- Email with validation -->
+                <div class="element-group">
+                    <label for="email">Email (Name: userEmail) <span style="color:red">*</span></label>
+                    <input type="email" id="email" name="userEmail" required placeholder="Enter valid email" data-test-id="input-email">
+                    <span class="error-message" id="emailError">Please enter a valid email</span>
+                </div>
+
+                <!-- Password with tooltip -->
+                <div class="element-group">
+                    <label for="password" class="tooltip">Password (ID: password) <span style="color:red">*</span>
+                        <span class="tooltiptext">Password must be 8+ characters</span>
+                    </label>
+                    <input type="password" id="password" required minlength="8" placeholder="Enter password (8+ chars)" title="Password must be at least 8 characters">
+                </div>
+
+                <!-- Disabled field -->
+                <div class="element-group">
+                    <label for="readonlyField">Read-Only Field (disabled)</label>
+                    <input type="text" id="readonlyField" value="This field is read-only" disabled>
+                </div>
+
+                <!-- Hidden field -->
+                <div class="element-group">
+                    <label>Hidden Field Testing</label>
+                    <input type="text" id="hiddenField" style="display:none;" value="Hidden value for testing">
+                    <button onclick="toggleHiddenField()">Toggle Hidden Field</button>
+                    <p style="margin-top:10px; font-size:0.9em; color:#64748b;">Hidden field is currently: <strong id="hiddenStatus">HIDDEN</strong></p>
+                </div>
+
+                <!-- Checkboxes with class -->
+                <div class="element-group">
+                    <label>Skills (Class: skill-checkbox)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" class="skill-checkbox" id="java" value="java" data-skill="java">
+                            <label for="java">Java</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" class="skill-checkbox" id="python" value="python" data-skill="python">
+                            <label for="python">Python</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" class="skill-checkbox" id="javascript" value="javascript" data-skill="javascript">
+                            <label for="javascript">JavaScript</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" class="skill-checkbox" id="selenium" value="selenium" data-skill="selenium">
+                            <label for="selenium">Selenium</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radio Buttons -->
+                <div class="element-group">
+                    <label>Experience Level (Name: experience) <span style="color:red">*</span></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="experience" id="beginner" value="beginner" data-level="1">
+                            <label for="beginner">Beginner</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="experience" id="intermediate" value="intermediate" data-level="2">
+                            <label for="intermediate">Intermediate</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="experience" id="expert" value="expert" data-level="3">
+                            <label for="expert">Expert</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dropdown -->
+                <div class="element-group">
+                    <label for="country">Country (ID: country) <span style="color:red">*</span></label>
+                    <select id="country" name="country" required data-test-id="select-country">
+                        <option value="">Select Country</option>
+                        <option value="usa">United States</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="india">India</option>
+                        <option value="canada">Canada</option>
+                        <option value="australia">Australia</option>
+                    </select>
+                </div>
+
+                <!-- Textarea with autofocus -->
+                <div class="element-group">
+                    <label for="comments">Comments (ID: comments)</label>
+                    <textarea id="comments" rows="4" placeholder="Enter your comments here..." maxlength="200"></textarea>
+                    <p style="font-size:0.85em; color:#64748b; margin-top:5px;">Max 200 characters</p>
+                </div>
+
+                <!-- Links -->
+                <div class="element-group">
+                    <label>Useful Links (Link Text & Partial Link Text)</label>
+                    <p>
+                        <a href="https://www.selenium.dev/" target="_blank" id="link-selenium">Selenium Documentation</a> |
+                        <a href="https://playwright.dev/" target="_blank" id="link-playwright">Playwright Guide</a> |
+                        <a href="https://www.cypress.io/" target="_blank" id="link-cypress">Cypress Testing Framework</a>
+                    </p>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="element-group">
+                    <button name="submitBtn" id="submitBtn" onclick="validateAndSubmit()" data-action="submit">Submit Form</button>
+                    <button type="reset" id="resetBtn" onclick="resetForm()">Reset Form</button>
+                </div>
+
+                <!-- Output Display -->
+                <div id="basicOutput" class="output-box" style="display:none;"></div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- MEDIUM LEVEL SECTION - ENHANCED -->
+            <!-- ========================================== -->
+            <div class="section-card" id="medium">
+                <div class="section-header">
+                    <span class="level-badge level-medium">🟡 MEDIUM</span>
+                    <h2>Medium Level - Windows, Tabs, Dialogs & Interactions</h2>
+                </div>
+
+                <!-- Window Handles -->
+                <div class="element-group">
+                    <label>Window & Tab Operations</label>
+                    <button id="openNewWindow" onclick="openNewWindow()" data-test="window-new">Open New Window</button>
+                    <button id="openNewTab" onclick="openNewTab()" data-test="tab-new">Open New Tab</button>
+                    <button id="openMultipleTabs" onclick="openMultipleTabs()" data-test="tabs-multiple">Open 3 Tabs</button>
+                </div>
+
+                <!-- Alert Dialogs -->
+                <div class="element-group">
+                    <label>JavaScript Alerts & Dialogs</label>
+                    <button id="simpleAlert" onclick="showSimpleAlert()">Simple Alert</button>
+                    <button id="confirmAlert" onclick="showConfirmAlert()">Confirm Dialog</button>
+                    <button id="promptAlert" onclick="showPromptAlert()">Prompt Dialog</button>
+                    <div id="alertOutput" class="output-box" style="display:none;"></div>
+                </div>
+
+                <!-- Modal with Keyboard Support -->
+                <div class="element-group">
+                    <label>Modal Dialog (Press ESC to close)</label>
+                    <button id="openModal" onclick="openModal()">Open Modal</button>
+                    <button id="openNestedModal" onclick="openNestedModal()">Open Nested Modal</button>
+                </div>
+
+                <!-- iFrame -->
+                <div class="element-group">
+                    <label>iFrame Example (ID: testFrame)</label>
+                    <iframe id="testFrame" srcdoc="
+                        <html>
+                        <body style='font-family: Arial; padding: 20px; background: linear-gradient(135deg, #e0f2fe, #bfdbfe);'>
+                            <h3 style='color: #0369a1;'>🖼️ Inside an iFrame</h3>
+                            <p>This content is within an iframe element.</p>
+                            <input type='text' id='frameInput' placeholder='Type inside iframe' style='padding: 10px; width: 90%; border: 2px solid #0284c7; border-radius: 6px; margin: 10px 0;'>
+                            <button onclick='alert(\"Button clicked inside iframe!\")' style='padding: 10px 20px; background: #0284c7; color: white; border: none; border-radius: 6px; cursor: pointer;'>Click Me in Frame</button>
+                        </body>
+                        </html>
+                    "></iframe>
+                </div>
+
+                <!-- Paginated Table -->
+                <div class="element-group">
+                    <label>Data Table with Pagination (ID: dataTable)</label>
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Test Case</th>
+                                <th>Tool</th>
+                                <th>Status</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <button onclick="changePage(-1)">Previous</button>
+                        <button class="active" id="page1" onclick="goToPage(1)">1</button>
+                        <button id="page2" onclick="goToPage(2)">2</button>
+                        <button id="page3" onclick="goToPage(3)">3</button>
+                        <button onclick="changePage(1)">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ADVANCED LEVEL SECTION - ENHANCED -->
+            <!-- ========================================== -->
+            <div class="section-card" id="advanced">
+                <div class="section-header">
+                    <span class="level-badge level-advanced">🔴 ADVANCED</span>
+                    <h2>Advanced Level - Dynamic, Hidden & Complex Elements</h2>
+                </div>
+
+                <!-- AJAX Simulation -->
+                <div class="element-group">
+                    <label>AJAX Content Loading (Simulates API Call)</label>
+                    <button id="loadDynamicContent" onclick="loadDynamicContent()">Load Dynamic Content</button>
+                    <button id="loadWithDelay" onclick="loadDynamicContent(5000)">Load with 5s Delay</button>
+                    <div id="dynamicContent">Click the button to load content...</div>
+                </div>
+
+                <!-- Hidden Element on Hover -->
+                <div class="element-group">
+                    <label>Hidden Element (Revealed on Hover)</label>
+                    <div class="hover-container" id="hoverContainer" data-hover="true">
+                        <p>🎯 Hover over this area to reveal hidden content</p>
+                        <div class="hidden-element" id="hiddenElement" data-visibility="hidden">
+                            🎉 Hidden element revealed! (ID: hiddenElement)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Attributes -->
+                <div class="element-group">
+                    <label>Elements with Data Attributes</label>
+                    <button 
+                        id="dataBtn1" 
+                        data-test-id="automation-button-1" 
+                        data-action="click" 
+                        data-priority="high"
+                        data-timestamp=""
+                        onclick="showDataAttributes(this)">
+                        Button with Data Attributes
+                    </button>
+                    <div id="dataOutput" class="output-box" style="display:none;"></div>
+                </div>
+
+                <!-- Dynamic Attribute Manipulation -->
+                <div class="element-group">
+                    <label>Dynamic Attribute Manipulation</label>
+                    <input type="text" id="dynamicAttrInput" placeholder="This will change attributes" data-status="initial">
+                    <button onclick="toggleAttributes()">Toggle Readonly/Disabled</button>
+                    <button onclick="changeDataAttribute()">Change Data Attribute</button>
+                    <p id="attrStatus" style="margin-top:10px; font-size:0.9em; color:#64748b;">Current: Normal input</p>
+                </div>
+
+                <!-- Dynamic Modal -->
+                <div class="element-group">
+                    <label>Dynamic Modal (ID Generated at Runtime)</label>
+                    <button id="openDynamicModal" onclick="openDynamicModal()">Open Dynamic Modal</button>
+                </div>
+
+                <!-- Custom Sized Window -->
+                <div class="element-group">
+                    <label>Custom Window Operations</label>
+                    <button id="openCustomWindow" onclick="openCustomWindow()">Open 600x400 Window</button>
+                    <button id="openCenteredWindow" onclick="openCenteredWindow()">Open Centered Window</button>
+                </div>
+
+                <!-- Nested Elements for XPath -->
+                <div class="element-group">
+                    <label>Nested Elements (XPath Practice)</label>
+                    <div id="parent-div" class="parent-container" data-parent="true" style="padding:20px; background:#f1f5f9; border-radius:8px;">
+                        <div id="child-div-1" class="child-container" style="margin-bottom:15px; padding:15px; background:white; border-radius:6px;">
+                            <span id="grandchild-span-1" class="grandchild-element" data-position="first">First Grandchild</span>
+                            <span id="grandchild-span-2" class="grandchild-element" data-position="second">Second Grandchild</span>
+                        </div>
+                        <div id="child-div-2" class="child-container" style="padding:15px; background:white; border-radius:6px;">
+                            <span id="grandchild-span-3" class="grandchild-element" data-position="third">Third Grandchild</span>
+                            <button id="nested-button" onclick="alert('Nested button clicked!')" data-nested="true">Nested Button</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll to View Element -->
+                <div class="element-group">
+                    <label>Scroll Into View Testing</label>
+                    <div style="height:300px; overflow-y:scroll; border:2px solid #cbd5e1; border-radius:8px; padding:20px;" id="scrollContainer">
+                        <p>Scroll down to find the hidden button...</p>
+                        <div style="height:500px;"></div>
+                        <button id="scrollButton" onclick="alert('You found the scroll button!')" style="background:var(--success);">🎯 Hidden Scroll Button</button>
+                        <div style="height:300px;"></div>
+                    </div>
+                </div>
+
+                <!-- Advanced iFrame -->
+                <div class="element-group">
+                    <label>Advanced iFrame with Form (ID: advancedFrame)</label>
+                    <iframe id="advancedFrame" srcdoc="
+                        <html>
+                        <head>
+                            <style>
+                                body { 
+                                    font-family: Arial; 
+                                    padding: 20px; 
+                                    background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); 
+                                    color: white; 
+                                }
+                                input, button { 
+                                    margin: 8px 0; 
+                                    padding: 10px; 
+                                    border-radius: 6px; 
+                                    border: none; 
+                                    width: 100%;
+                                }
+                                button { 
+                                    background: #19547b; 
+                                    color: white; 
+                                    cursor: pointer; 
+                                    font-weight: bold;
+                                }
+                                button:hover { background: #0d3a5c; }
+                            </style>
+                        </head>
+                        <body>
+                            <h4>🔧 Advanced iFrame Form</h4>
+                            <input type='text' id='advancedInput' placeholder='Enter text here'>
+                            <button onclick='document.getElementById(\"result\").innerText = \"You entered: \" + document.getElementById(\"advancedInput\").value'>Submit</button>
+                            <p id='result' style='margin-top:15px; padding:10px; background:rgba(255,255,255,0.2); border-radius:6px;'></p>
+                        </body>
+                        </html>
+                    "></iframe>
+                </div>
+
+                <!-- File Upload -->
+                <div class="element-group">
+                    <label for="fileUpload">File Upload (ID: fileUpload)</label>
+                    <input type="file" id="fileUpload" accept=".pdf,.jpg,.png,.txt" onchange="handleFileUpload(this)">
+                    <div id="fileOutput" class="output-box" style="display:none;"></div>
+                </div>
+
+                <!-- Drag and Drop Zone -->
+                <div class="element-group">
+                    <label>Drag and Drop Zone</label>
+                    <div id="dragSource" draggable="true" ondragstart="dragStart(event)" style="padding:20px; background:var(--primary); color:white; border-radius:8px; cursor:move; margin-bottom:15px; text-align:center;">
+                        🎯 Drag Me!
+                    </div>
+                    <div id="dropZone" ondrop="drop(event)" ondragover="allowDrop(event)" style="padding:40px; border:3px dashed #cbd5e1; border-radius:8px; text-align:center; background:#f8f9fa;">
+                        📦 Drop Here
+                    </div>
+                    <div id="dropOutput" style="margin-top:10px; color:var(--success); font-weight:bold;"></div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- LOGIN SIMULATION SECTION - NEW -->
+            <!-- ========================================== -->
+            <div class="section-card" id="login">
+                <div class="section-header">
+                    <span class="level-badge level-advanced">🔐 BONUS</span>
+                    <h2>Login Simulation with Authentication</h2>
+                </div>
+
+                <div class="element-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" id="loginUsername" placeholder="Use: admin" data-test="login-username">
+                </div>
+
+                <div class="element-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Use: password123" data-test="login-password">
+                </div>
+
+                <div class="element-group">
+                    <button id="loginBtn" onclick="simulateLogin()" data-action="login">Login</button>
+                    <button onclick="document.getElementById('loginUsername').value='admin'; document.getElementById('loginPassword').value='password123'">Auto-fill Credentials</button>
+                </div>
+
+                <div id="loginOutput" class="output-box" style="display:none;"></div>
+
+                <p style="margin-top:20px; padding:15px; background:#fef3c7; border-left:4px solid #f59e0b; border-radius:6px; font-size:0.9em;">
+                    <strong>Test Credentials:</strong><br>
+                    Username: <code>admin</code><br>
+                    Password: <code>password123</code>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>📋 Modal Dialog</h2>
+            <p>This is a modal popup for testing purposes.</p>
+            <p>Modal ID: <strong>myModal</strong></p>
+            <input type="text" id="modalInput" placeholder="Enter text in modal" style="margin: 15px 0;">
+            <button onclick="closeModal()">Close Modal</button>
+            <button id="openNestedModalBtn" onclick="openSecondModal()">Open Nested Modal</button>
+        </div>
+    </div>
+
+    <!-- Nested Modal -->
+    <div id="nestedModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeNestedModal()">&times;</span>
+            <h2>🔗 Nested Modal</h2>
+            <p>This is a modal inside another modal!</p>
+            <button onclick="closeNestedModal()">Close This Modal</button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT FUNCTIONALITY -->
+    <!-- ========================================== -->
+    <script>
+        // ========== THEME TOGGLE ==========
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.getElementById('themeToggle');
+            if (document.body.classList.contains('dark-mode')) {
+                btn.textContent = '☀️ Light Mode';
+            } else {
+                btn.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        // ========== NAVIGATION SCROLL ==========
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // ========== BASIC LEVEL FUNCTIONS ==========
+        
+        function validateAndSubmit() {
+            const username = document.getElementById('username');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const country = document.getElementById('country');
+            
+            let isValid = true;
+            
+            // Validate username
+            if (username.value.length < 3) {
+                document.getElementById('usernameError').style.display = 'block';
+                username.style.borderColor = 'var(--danger)';
+                isValid = false;
+            } else {
+                document.getElementById('usernameError').style.display = 'none';
+                username.style.borderColor = 'var(--success)';
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById('emailError').style.display = 'block';
+                email.style.borderColor = 'var(--danger)';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+                email.style.borderColor = 'var(--success)';
+            }
+            
+            // Check experience radio
+            const experience = document.querySelector('input[name="experience"]:checked');
+            
+            if (isValid) {
+                const output = document.getElementById('basicOutput');
+                output.style.display = 'block';
+                output.innerHTML = `
+                    <strong>✅ Form Submitted Successfully!</strong><br><br>
+                    <strong>Username:</strong> ${username.value}<br>
+                    <strong>Email:</strong> ${email.value}<br>
+                    <strong>Country:</strong> ${country.value || 'Not selected'}<br>
+                    <strong>Experience:</strong> ${experience ? experience.value : 'Not selected'}
+                `;
+            }
+        }
+        
+        function resetForm() {
+            document.getElementById('basicOutput').style.display = 'none';
+            document.querySelectorAll('.error-message').forEach(err => err.style.display = 'none');
+            document.querySelectorAll('input').forEach(input => input.style.borderColor = '#cbd5e1');
+        }
+        
+        function toggleHiddenField() {
+            const field = document.getElementById('hiddenField');
+            const status = document.getElementById('hiddenStatus');
+            
+            if (field.style.display === 'none') {
+                field.style.display = 'block';
+                status.textContent = 'VISIBLE';
+                status.style.color = 'var(--success)';
+            } else {
+                field.style.display = 'none';
+                status.textContent = 'HIDDEN';
+                status.style.color = 'var(--danger)';
+            }
+        }
+
+        // ========== MEDIUM LEVEL FUNCTIONS ==========
+        
+        function openNewWindow() {
+            const newWindow = window.open('', 'TestWindow', 'width=600,height=450');
+            newWindow.document.write(`
+                <html>
+                <head>
+                    <title>New Test Window</title>
+                    <style>
+                        body { 
+                            font-family: Arial; 
+                            padding: 30px; 
+                            background: linear-gradient(135deg, #667eea, #764ba2); 
+                            color: white;
+                        }
+                        button { 
+                            padding: 12px 24px; 
+                            background: white; 
+                            color: #667eea; 
+                            border: none; 
+                            border-radius: 8px; 
+                            cursor: pointer; 
+                            font-weight: bold;
+                            margin: 10px 5px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>🪟 New Window Opened</h2>
+                    <p>This is a new window for testing window handles.</p>
+                    <p><strong>Window Name:</strong> TestWindow</p>
+                    <p><strong>Window Handle ID:</strong> ${Date.now()}</p>
+                    <button onclick="window.close()">Close This Window</button>
+                    <button onclick="window.opener.focus()">Focus Parent Window</button>
+                </body>
+                </html>
+            `);
+        }
+
+        function openNewTab() {
+            window.open('https://www.selenium.dev/', '_blank');
+        }
+
+        function openMultipleTabs() {
+            window.open('https://www.selenium.dev/', '_blank');
+            setTimeout(() => window.open('https://playwright.dev/', '_blank'), 300);
+            setTimeout(() => window.open('https://www.cypress.io/', '_blank'), 600);
+        }
+
+        function showSimpleAlert() {
+            alert('🔔 This is a simple alert dialog!');
+        }
+
+        function showConfirmAlert() {
+            const result = confirm('❓ Do you want to proceed with this action?');
+            const output = document.getElementById('alertOutput');
+            output.style.display = 'block';
+            output.innerHTML = result ? 
+                '<strong>✅ You clicked OK</strong>' : 
+                '<strong>❌ You clicked Cancel</strong>';
+        }
+
+        function showPromptAlert() {
+            const name = prompt('👤 Please enter your name:', '');
+            const output = document.getElementById('alertOutput');
+            output.style.display = 'block';
+            output.innerHTML = name ? 
+                `<strong>Hello, ${name}! 👋</strong>` : 
+                '<strong>No name entered</strong>';
+        }
+
+        function openModal() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        function openNestedModal() {
+            openModal();
+        }
+
+        function openSecondModal() {
+            document.getElementById('nestedModal').style.display = 'block';
+        }
+
+        function closeNestedModal() {
+            document.getElementById('nestedModal').style.display = 'none';
+        }
+
+        // Close modals with ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+                closeNestedModal();
+            }
+        });
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('myModal');
+            const nested = document.getElementById('nestedModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+            if (event.target == nested) {
+                closeNestedModal();
+            }
+        }
+
+        // Table Pagination
+        const tableData = [
+            { id: 1, name: 'Login Test', tool: 'Selenium', status: 'Pass', duration: '2.3s' },
+            { id: 2, name: 'Form Validation', tool: 'Playwright', status: 'Pass', duration: '1.8s' },
+            { id: 3, name: 'Modal Test', tool: 'Cypress', status: 'Fail', duration: '3.1s' },
+            { id: 4, name: 'API Integration', tool: 'Selenium', status: 'Pass', duration: '4.2s' },
+            { id: 5, name: 'Dropdown Select', tool: 'Playwright', status: 'Pass', duration: '1.5s' },
+            { id: 6, name: 'File Upload', tool: 'Cypress', status: 'Pass', duration: '2.7s' },
+            { id: 7, name: 'Drag and Drop', tool: 'Selenium', status: 'Fail', duration: '3.5s' },
+            { id: 8, name: 'Window Handle', tool: 'Playwright', status: 'Pass', duration: '2.1s' },
+            { id: 9, name: 'iframe Navigation', tool: 'Cypress', status: 'Pass', duration: '2.9s' }
+        ];
+
+        let currentPage = 1;
+        const rowsPerPage = 3;
+
+        function renderTable(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = tableData.slice(start, end);
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            pageData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.id}</td>
+                    <td>${row.name}</td>
+                    <td>${row.tool}</td>
+                    <td style="color: ${row.status === 'Pass' ? 'var(--success)' : 'var(--danger)'}; font-weight: bold;">${row.status}</td>
+                    <td>${row.duration}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Update pagination buttons
+            document.querySelectorAll('.pagination button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('page' + page).classList.add('active');
+        }
+
+        function changePage(direction) {
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > 3) currentPage = 3;
+            renderTable(currentPage);
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderTable(page);
+        }
+
+        // Initialize table
+        renderTable(1);
+
+        // ========== ADVANCED LEVEL FUNCTIONS ==========
+        
+        function loadDynamicContent(delay = 2000) {
+            const container = document.getElementById('dynamicContent');
+            container.innerHTML = '<p class="loading"><span class="spinner"></span> Loading content...</p>';
+            
+            setTimeout(() => {
+                container.innerHTML = `
+                    <strong>✅ Dynamic Content Loaded Successfully!</strong>
+                    <p>This content was loaded after a ${delay/1000}-second delay (simulating AJAX).</p>
+                    <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                    <p id="dynamicParagraph" data-dynamic="true">This paragraph has ID: <code>dynamicParagraph</code></p>
+                `;
+            }, delay);
+        }
+
+        function showDataAttributes(button) {
+            const testId = button.getAttribute('data-test-id');
+            const action = button.getAttribute('data-action');
+            const priority = button.getAttribute('data-priority');
+            
+            // Set timestamp
+            button.setAttribute('data-timestamp', new Date().toISOString());
+            const timestamp = button.getAttribute('data-timestamp');
+            
+            const output = document.getElementById('dataOutput');
+            output.style.display = 'block';
+            output.innerHTML = `
+                <strong>📊 Data Attributes Found:</strong><br><br>
+                <strong>data-test-id:</strong> ${testId}<br>
+                <strong>data-action:</strong> ${action}<br>
+                <strong>data-priority:</strong> ${priority}<br>
+                <strong>data-timestamp:</strong> ${timestamp}
+            `;
+        }
+
+        let attrState = 0;
+        function toggleAttributes() {
+            const input = document.getElementById('dynamicAttrInput');
+            const status = document.getElementById('attrStatus');
+            
+            attrState = (attrState + 1) % 3;
+            
+            if (attrState === 0) {
+                input.removeAttribute('readonly');
+                input.removeAttribute('disabled');
+                input.setAttribute('data-status', 'normal');
+                status.textContent = 'Current: Normal input';
+                status.style.color = '#64748b';
+            } else if (attrState === 1) {
+                input.setAttribute('readonly', 'readonly');
+                input.removeAttribute('disabled');
+                input.setAttribute('data-status', 'readonly');
+                status.textContent = 'Current: Read-only';
+                status.style.color = 'var(--warning)';
+            } else {
+                input.removeAttribute('readonly');
+                input.setAttribute('disabled', 'disabled');
+                input.setAttribute('data-status', 'disabled');
+                status.textContent = 'Current: Disabled';
+                status.style.color = 'var(--danger)';
+            }
+        }
+
+        function changeDataAttribute() {
+            const input = document.getElementById('dynamicAttrInput');
+            const currentStatus = input.getAttribute('data-status');
+            const newStatus = 'updated-' + Date.now();
+            input.setAttribute('data-status', newStatus);
+            
+            const status = document.getElementById('attrStatus');
+            status.textContent = `Data attribute changed to: ${newStatus}`;
+            status.style.color = 'var(--success)';
+        }
+
+        function openDynamicModal() {
+            const modalId = 'dynamicModal_' + Date.now();
+            
+            const modalHTML = `
+                <div id="${modalId}" class="modal" style="display: block;">
+                    <div class="modal-content">
+                        <span class="close" onclick="document.getElementById('${modalId}').remove()">&times;</span>
+                        <h2>🎯 Dynamic Modal</h2>
+                        <p>This modal was created dynamically at runtime!</p>
+                        <p><strong>Modal ID:</strong> <code>${modalId}</code></p>
+                        <p><strong>Created:</strong> ${new Date().toLocaleTimeString()}</p>
+                        <button onclick="document.getElementById('${modalId}').remove()">Close Modal</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function openCustomWindow() {
+            const customWindow = window.open('', 'CustomWindow', 'width=600,height=400,left=100,top=100');
+            customWindow.document.write(`
+                <html>
+                <head>
+                    <title>Custom Window - 600x400</title>
+                    <style>
+                        body { 
+                            font-family: Arial; 
+                            padding: 30px; 
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                        }
+                        h2 { margin-top: 0; }
+                        button { 
+                            padding: 12px 24px; 
+                            background: white; 
+                            color: #667eea; 
+                            border: none; 
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            margin: 5px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>📐 Custom Sized Window</h2>
+                    <p>Window dimensions: <strong>600px × 400px</strong></p>
+                    <p>Window name: <strong>CustomWindow</strong></p>
+                    <button onclick="window.close()">Close Window</button>
+                    <button onclick="window.resizeTo(800, 600)">Resize to 800x600</button>
+                </body>
+                </html>
+            `);
+        }
+
+        function openCenteredWindow() {
+            const width = 500;
+            const height = 400;
+            const left = (screen.width / 2) - (width / 2);
+            const top = (screen.height / 2) - (height / 2);
+            
+            const centeredWindow = window.open('', 'CenteredWindow', `width=${width},height=${height},left=${left},top=${top}`);
+            centeredWindow.document.write(`
+                <html>
+                <head>
+                    <title>Centered Window</title>
+                    <style>
+                        body { 
+                            font-family: Arial; 
+                            padding: 30px; 
+                            background: linear-gradient(135deg, #4ade80, #22c55e);
+                            color: white;
+                            text-align: center;
+                        }
+                        button { 
+                            padding: 12px 24px; 
+                            background: white; 
+                            color: #22c55e; 
+                            border: none; 
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>🎯 Perfectly Centered Window</h2>
+                    <p>This window opened in the center of your screen!</p>
+                    <button onclick="window.close()">Close Window</button>
+                </body>
+                </html>
+            `);
+        }
+
+        function handleFileUpload(input) {
+            const output = document.getElementById('fileOutput');
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                output.style.display = 'block';
+                output.innerHTML = `
+                    <strong>📎 File Selected:</strong><br><br>
+                    <strong>Name:</strong> ${file.name}<br>
+                    <strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB<br>
+                    <strong>Type:</strong> ${file.type || 'Unknown'}<br>
+                    <strong>Last Modified:</strong> ${new Date(file.lastModified).toLocaleString()}
+                `;
+            }
+        }
+
+        // Drag and Drop
+        function dragStart(event) {
+            event.dataTransfer.setData('text', event.target.id);
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+            event.target.style.borderColor = 'var(--primary)';
+            event.target.style.background = '#e0e7ff';
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData('text');
+            document.getElementById('dropOutput').innerHTML = '✅ Element dropped successfully!';
+            event.target.style.borderColor = 'var(--success)';
+            event.target.style.background = '#d1fae5';
+        }
+
+        // Login Simulation
+        function simulateLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const output = document.getElementById('loginOutput');
+            
+            output.style.display = 'block';
+            
+            if (username === 'admin' && password === 'password123') {
+                output.style.borderLeftColor = 'var(--success)';
+                output.innerHTML = `
+                    <strong>✅ Login Successful!</strong><br><br>
+                    Welcome back, <strong>${username}</strong>!<br>
+                    <small>Session ID: ${Date.now()}</small>
+                `;
+            } else {
+                output.style.borderLeftColor = 'var(--danger)';
+                output.innerHTML = `
+                    <strong>❌ Login Failed!</strong><br><br>
+                    Invalid username or password.<br>
+                    <small>Please try again.</small>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
